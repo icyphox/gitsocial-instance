@@ -3,6 +3,7 @@ from subprocess import run
 import json
 import arrow
 import string
+import shutil
 
 app = Flask(__name__)
 
@@ -38,6 +39,9 @@ def create_profile():
     user_hash = request.args.get('hash')
     import os
     os.makedirs('repos/{}'.format(user_hash))
+    shutil.copy('empty.json', 'repos/{}/root.json'.format(user_hash))
+    with open('repos/{}/root.json'.format(user_hash), 'w') as f:
+        f.write()
     Repo.init(os.path.join('repos', user_hash))
     return "OK"
 
@@ -46,7 +50,7 @@ def create_profile():
 def edit_json():
     key = request.args.get('key')
     user_hash = request.args.get('hash')
-    if not all([x in (string.ascii_lowercase + string.digitsi) for x in user_hash]):
+    if not all([x in (string.ascii_lowercase + string.digits) for x in user_hash]):
         return abort(400)
     with open('repos/{}/root.json'.format(user_hash), 'r') as f:
         json_data = json.loads(f)
