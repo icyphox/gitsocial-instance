@@ -3,7 +3,6 @@ from subprocess import run
 import json
 import arrow
 import string
-import pygit2
 
 app = Flask(__name__)
 
@@ -28,6 +27,8 @@ def search_profiles():
             j = json.loads("repos/{}/root.json".format(dir_name))
             if j["user_name"] == user_name:
                 ret.append(dir_name)
+        except:
+            return abort(500)
     return jsonify(ret)
 
 
@@ -36,9 +37,9 @@ def create_profile():
     from git import Repo
     user_hash = request.args.get('hash')
     import os
-    os.mkdir('repos/{}'.format(user_hash))
+    os.makedirs('repos/{}'.format(user_hash))
     Repo.init(os.path.join('repos', user_hash))
-
+    return "OK"
 
 
 @app.route('/api/edit')
@@ -67,3 +68,5 @@ def edit_json():
     repo.git.add('root.json')
     repo.git.commit(m='modify root.json')
     return "OK"
+
+app.run()
