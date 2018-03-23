@@ -14,10 +14,14 @@ IP_ADDR = ""
 @app.route("/api/get_instance")
 def serve_profile():
     user_hash = request.args.get('hash')
-    if user_hash in os.listdir('repos/'):
-        return send_from_directory(os.path.join('repos', user_hash), 'root.json')
-    else:
-        return abort(404)
+    try:
+        if user_hash in os.listdir('repos/'):
+            return send_from_directory(os.path.join('repos', user_hash), 'root.json')
+        else:
+            return abort(404)
+    except FileNotFoundError: 
+        return abort(400)
+return "OK"
 
 
 
@@ -45,6 +49,7 @@ def create_profile():
     print(type(password))
     if os.path.exists('repos/{}'.format(user_hash)):
         abort(400)
+
     os.makedirs('repos/{}'.format(user_hash))
     shutil.copy('empty.json', 'repos/{}/root.json'.format(user_hash))
     path = 'repos/{}/root.json'.format(user_hash)
@@ -68,21 +73,24 @@ def edit_json():
     user_hash = request.args.get('hash')
     if not all([x in (string.ascii_lowercase + string.digits) for x in user_hash]):
         return abort(400)
-    with open('repos/{}/root.json'.format(user_hash), 'r') as f:
-        json_data = json.loads(f)
-        if key == 'nick':
-            json_data['nick'] = request.args.get('val')
-        elif key == 'website':
-            json_data['website'] = request.args.get('val')
-        elif key == 'posts':
-            message_dict = {
-                'content': request.args.get('val'),
-                'timestamp': arrow.utcnow().timestamp
-                    }
-        elif key == 'following':
-            json_data['following'].append(request.args.get('val'))
-        else:
-            return abort(400)
+    try:
+        with open('repos/{}/root.json'.format(user_hash), 'r') as f:
+            json_data = json.loads(f)
+            if key == 'nick':
+                json_data['nick'] = request.args.get('val')
+            elif key == 'website':
+                json_data['website'] = request.args.get('val')
+            elif key == 'posts':
+                message_dict = {
+                    'content': request.args.get('val'),
+                    'timestamp': arrow.utcnow().timestamp
+                        }
+            elif key == 'following':
+                json_data['following'].append(request.args.get('val'))
+            else:
+                return abort(400)
+    except FileNotFoundError:
+        return abort(400)
     from git import Repo
     repo = Repo('repos/{}'.format(user_hash))
     repo.git.add('root.json')
@@ -93,26 +101,24 @@ def edit_json():
 def get_posts(name = None):
     import requests
     list_of_posts = []
-    #get_peer_list
-    #get_list_of_posts
-    if(name=="user1"):
-        list_of_posts = [{"timestamp":"today11","content":"contentuser1"},{"timestamp":"today12","content":"content2user1"}]
-    else:
-        list_of_posts = [{"timestamp":"today21","content":"contentuser2"},{"timestamp":"today22","content":"content2user2"}]
+    get_location = requests.get('localhost/api/')
+    get_list_of_posts
     return list_of_posts
 
 @app.route('/')
 def gen_timeline():
-    listOfPosts = []
-    following = ["user1","user2"]
-    #user_name = request.args.get("username")
-    #with open('repos/{}/root.json'.format(user_name),'r') as f:
-        #json_data = json.loads(f)
-        #following = json_data['following']
+    list_of_posts = []
+    following = [{"nick": "user1"},{"nick": "user2"}]
+    user_name = request.args.get("username")
+    with open('repos/{}/root.json'.format(user_name),'r') as f:
+        json_data = json.loads(f)
+        following = json_data['following']
     for follow in following:
         posts = get_posts(follow)
         for post in posts:
-            listOfPosts.append({"timestamp": post.timestamp, "content": post.content, "username": follow.nick})
+            list_of_posts.append({"timestamp": post['timestamp'], 
+                                "content": post['content'], 
+                                "username": follow['nick']})
     
     return listOfPosts
 app.run(debug=True)
