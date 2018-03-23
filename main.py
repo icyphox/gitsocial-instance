@@ -89,8 +89,8 @@ def get_posts(name = None):
 
 @app.route('/')
 def gen_timeline():
-    listOfPosts = []
-    following = ["user1","user2"]
+    list_of_posts = []
+    following = [{"nick": "user1"},{"nick": "user2"}]
     #user_name = request.args.get("username")
     #with open('repos/{}/root.json'.format(user_name),'r') as f:
         #json_data = json.loads(f)
@@ -98,7 +98,9 @@ def gen_timeline():
     for follow in following:
         posts = get_posts(follow)
         for post in posts:
-            listOfPosts.append({"timestamp": post.timestamp, "content": post.content, "username": follow.nick})
+            list_of_posts.append({"timestamp": post['timestamp'], 
+                                "content": post['content'], 
+                                "username": follow['nick']})
     
-    return listOfPosts
+    return str(list_of_posts)
 app.run()
