@@ -6,6 +6,7 @@ import string
 import shutil
 import os
 import hashlib
+import requests
 
 app = Flask(__name__)
 
@@ -64,6 +65,8 @@ def create_profile():
     with open(path, 'w') as f:
         f.write(json.dumps(json_data))
     Repo.init(os.path.join('repos', user_hash))
+    payload = {'hash': user_hash, 'ip': 'localhost:5000'}
+    requests.get('http://localhost:5001/api/set_peer', params=payload)
     return "OK"
 
 
@@ -100,17 +103,16 @@ def edit_json():
     repo.git.commit(m='modify root.json')
     return "OK"
 
-@app.route('/api/get_posts/<name>')
-def get_posts(name = None):
-    import requests
+@app.route('/api/get_posts/<user_hash>')
+def get_posts(user_hash = None):
     list_of_posts = []
-    get_location = requests.get('localhost/api/')
-    get_list_of_posts
-    return list_of_posts
+    location = requests.get('localhost:5001/api/get_peer?hash={}'.format(user_hash))
+    print(location)
+    return "ok"
 
 @app.route('/login', methods=['POST'])
 def login_user():
-    redir_page = request.args.get('redir' '/')
+    redir_page = request.args.get('redir', '/')
     user = request.form['user']
     passw = request.form['pass']
     if not os.path.isdir('repos/{}'.format(user)):
