@@ -2,10 +2,8 @@
 	"hash": "",
 	"nick": "",
 	"website": "",
-	"posts": [{
-		"timestamp": "",
-		"content": ""
-	}],
+    "password": "",
+	"posts": [],
 	"following": [""],
 	"followers": [""]
 }
