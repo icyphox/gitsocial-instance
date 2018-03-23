@@ -20,6 +20,7 @@ def serve_profile():
             return abort(404)
     except FileNotFoundError: 
         return abort(400)
+return "OK"
 
 
 
