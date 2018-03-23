@@ -120,5 +120,5 @@ def gen_timeline():
                                 "content": post['content'], 
                                 "username": follow['nick']})
     
-    return listOfPosts
+    return list_of_posts
 app.run(debug=True)
