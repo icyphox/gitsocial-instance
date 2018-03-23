@@ -73,4 +73,30 @@ def edit_json():
     repo.git.commit(m='modify root.json')
     return "OK"
 
+@app.route('/api/get_posts/<name>')
+def get_posts(name = None):
+    import requests
+    list_of_posts = []
+    #get_peer_list
+    #get_list_of_posts
+    if(name=="user1"):
+        list_of_posts = [{"timestamp":"today11","content":"contentuser1"},{"timestamp":"today12","content":"content2user1"}]
+    else:
+        list_of_posts = [{"timestamp":"today21","content":"contentuser2"},{"timestamp":"today22","content":"content2user2"}]
+    return list_of_posts
+
+@app.route('/')
+def gen_timeline():
+    listOfPosts = []
+    following = ["user1","user2"]
+    #user_name = request.args.get("username")
+    #with open('repos/{}/root.json'.format(user_name),'r') as f:
+        #json_data = json.loads(f)
+        #following = json_data['following']
+    for follow in following:
+        posts = get_posts(follow)
+        for post in posts:
+            listOfPosts.append({"timestamp": post.timestamp, "content": post.content, "username": follow.nick})
+    
+    return listOfPosts
 app.run()
