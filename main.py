@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory, abort
 from subprocess import run
 import json
 import arrow
+import string
 
 app = Flask(__name__)
 
@@ -36,19 +37,22 @@ def add_json():
 @app.route('/api/edit')
 def edit_json():
     key = request.args.get('key')
-    with open('root.json', 'r') as f:
+    user_hash = request.args.get('hash')
+    if not all([x in (string.ascii_lowercase + string.digitsi) for x in user_hash]):
+        return abort(400)
+    with open('repos/{}/root.json'.format(user_hash), 'r') as f:
         json_data = json.loads(f)
         if key == 'nick':
             json_data['nick'] = request.args.get('val')
-        if key == 'website':
+        elif key == 'website':
             json_data['website'] = request.args.get('val')
-        if key == 'posts':
+        elif key == 'posts':
             message_dict = {
                 'content': request.args.get('val'),
                 'timestamp': arrow.utcnow().timestamp
                     }
-
-        
-
-    
+        elif key == 'following':
+            json_data['following'].append(request.args.get('val'))
+        else:
+            return abort(400)
     return "OK"
