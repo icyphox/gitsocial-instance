@@ -21,7 +21,7 @@ def serve_profile():
             return abort(404)
     except FileNotFoundError: 
         return abort(400)
-return "OK"
+    return "OK"
 
 
 
@@ -75,7 +75,7 @@ def edit_json():
         return abort(400)
     try:
         with open('repos/{}/root.json'.format(user_hash), 'r') as f:
-            json_data = json.loads(f)
+            json_data = json.load(f)
             if key == 'nick':
                 json_data['nick'] = request.args.get('val')
             elif key == 'website':
@@ -91,6 +91,9 @@ def edit_json():
                 return abort(400)
     except FileNotFoundError:
         return abort(400)
+
+    with open('repos/{}/root.json'.format(user_hash), 'w') as f:
+        json.dump(json_data, f)
     from git import Repo
     repo = Repo('repos/{}'.format(user_hash))
     repo.git.add('root.json')
@@ -104,6 +107,17 @@ def get_posts(name = None):
     get_location = requests.get('localhost/api/')
     get_list_of_posts
     return list_of_posts
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    redir_page = request.args.get('redir' '/')
+    user = request.form['user']
+    passw = request.form['pass']
+    if not os.path.isdir('repos/{}'.format(user)):
+        abort(400)
+    else:
+        return "ok auth"
+
 
 @app.route('/')
 def gen_timeline():
