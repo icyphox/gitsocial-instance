@@ -30,9 +30,14 @@ def search_profiles():
                 ret.append(dir_name)
     return jsonify(ret)
 
+
 @app.route('/api/create')
 def create_profile():
-     
+    from git import Repo
+    user_hash = request.args.get('hash')
+    import os
+    os.mkdir('repos/{}'.format(user_hash))
+    Repo.init(os.path.join('repos', user_hash))
 
 
 
@@ -57,4 +62,8 @@ def edit_json():
             json_data['following'].append(request.args.get('val'))
         else:
             return abort(400)
+    from git import Repo
+    repo = Repo('repos/{}'.format(user_hash))
+    repo.git.add('root.json')
+    repo.git.commit(m='modify root.json')
     return "OK"
