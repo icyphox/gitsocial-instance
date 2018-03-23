@@ -3,6 +3,7 @@ from subprocess import run
 import json
 import arrow
 import string
+import pygit2
 
 app = Flask(__name__)
 
@@ -29,9 +30,10 @@ def search_profiles():
                 ret.append(dir_name)
     return jsonify(ret)
 
-@app.route('/api/add')
-def add_json():
-        
+@app.route('/api/create')
+def create_profile():
+     
+
 
 
 @app.route('/api/edit')
