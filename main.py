@@ -75,7 +75,7 @@ def edit_json():
         return abort(400)
     try:
         with open('repos/{}/root.json'.format(user_hash), 'r') as f:
-            json_data = json.loads(f)
+            json_data = json.load(f)
             if key == 'nick':
                 json_data['nick'] = request.args.get('val')
             elif key == 'website':
