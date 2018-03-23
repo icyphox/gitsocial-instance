@@ -4,6 +4,8 @@ import json
 import arrow
 import string
 import shutil
+import os
+import hashlib
 
 app = Flask(__name__)
 
@@ -33,17 +35,29 @@ def search_profiles():
     return jsonify(ret)
 
 
-@app.route('/api/create')
+
+@app.route('/api/create', methods=['POST'])
 def create_profile():
     from git import Repo
-    user_hash = request.args.get('hash')
-    import os
+    user_hash = request.form['hash']
+    password = request.form['password'].encode('utf-8')
+    nick = request.form['nick']
+    print(type(password))
+    if os.path.exists('repos/{}'.format(user_hash)):
+        abort(400)
     os.makedirs('repos/{}'.format(user_hash))
     shutil.copy('empty.json', 'repos/{}/root.json'.format(user_hash))
-    with open('repos/{}/root.json'.format(user_hash), 'w') as f:
-        json_data = json.loads(f)
-        json_data['hash'] = user_name
-        f.write(jsonify(json_data))
+    path = 'repos/{}/root.json'.format(user_hash)
+    json_data = None
+    with open(path) as f:
+        json_data = json.load(f)
+        json_data['hash'] = user_hash
+        json_data['nick'] = nick
+        m = hashlib.sha256()
+        m.update(password)
+        json_data['password'] = m.hexdigest()
+    with open(path, 'w') as f:
+        f.write(json.dumps(json_data))
     Repo.init(os.path.join('repos', user_hash))
     return "OK"
 
@@ -101,4 +115,4 @@ def gen_timeline():
             listOfPosts.append({"timestamp": post.timestamp, "content": post.content, "username": follow.nick})
     
     return listOfPosts
-app.run()
+app.run(debug=True)
