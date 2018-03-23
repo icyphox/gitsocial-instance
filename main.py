@@ -4,6 +4,7 @@ import json
 import arrow
 import string
 import shutil
+import os
 
 app = Flask(__name__)
 
@@ -37,7 +38,6 @@ def search_profiles():
 def create_profile():
     from git import Repo
     user_hash = request.args.get('hash')
-    import os
     os.makedirs('repos/{}'.format(user_hash))
     shutil.copy('empty.json', 'repos/{}/root.json'.format(user_hash))
     with open('repos/{}/root.json'.format(user_hash), 'w') as f:
