@@ -4,6 +4,6 @@
 	"website": "",
     "password": "",
 	"posts": [],
-	"following": [""],
-	"followers": [""]
+	"following": [],
+	"followers": []
 }
