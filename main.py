@@ -13,10 +13,13 @@ IP_ADDR = ""
 @app.route("/api/get_instance")
 def serve_profile():
     user_hash = request.args.get('hash')
-    if user_hash in os.listdir('repos/'):
-        return send_from_directory(os.path.join('repos', user_hash), 'root.json')
-    else:
-        return abort(404)
+    try:
+        if user_hash in os.listdir('repos/'):
+            return send_from_directory(os.path.join('repos', user_hash), 'root.json')
+        else:
+            return abort(404)
+    except FileNotFoundError: 
+        return abort(400)
 
 
 
