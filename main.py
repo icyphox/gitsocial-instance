@@ -41,7 +41,9 @@ def create_profile():
     os.makedirs('repos/{}'.format(user_hash))
     shutil.copy('empty.json', 'repos/{}/root.json'.format(user_hash))
     with open('repos/{}/root.json'.format(user_hash), 'w') as f:
-        f.write()
+        json_data = json.loads(f)
+        json_data['hash'] = user_name
+        f.write(jsonify(json_data))
     Repo.init(os.path.join('repos', user_hash))
     return "OK"
 
