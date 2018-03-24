@@ -45,7 +45,7 @@ def create_profile():
     user_hash = request.form['hash']
     password = request.form['password'].encode('utf-8')
     nick = request.form['nick']
-    print(type(password))
+ 
     if os.path.exists('repos/{}'.format(user_hash)):
         abort(400)
 
@@ -135,16 +135,16 @@ def gen_timeline():
         json_data = json.load(f)
         following = json_data['following']
     for follow in following:
-        print("follow", type(follow), follow)
+
         posts = get_posts(follow)
-        print("posts", posts)
+      
         for post in posts:
-            print("post", post)
+           
             list_of_posts.append({"timestamp": post['timestamp'], 
                                 "content": post['content'], 
                                 "username": follow})
     
-    print(list_of_posts)
+ 
     return render_template('index.html', posts=list_of_posts)
 
 app.run(debug=True)
