@@ -12,17 +12,18 @@ app = Flask(__name__)
 
 IP_ADDR = ""
 
-@app.route("/api/get_profile")
-def serve_profile():
-    user_hash = request.args.get('hash')
-    try:
-        if user_hash in os.listdir('repos/'):
-            return send_from_directory(os.path.join('repos', user_hash), 'root.json')
-        else:
-            return abort(404)
-    except FileNotFoundError: 
-        return abort(400)
-    return "OK"
+@app.route("/api/get_profile/<user_hash>")
+def serve_profile(user_hash = None, local = False):
+    if local:
+        return open(os.path.join('repos', user_hash, 'root.json')).read()
+    else:
+        try:
+            if user_hash in os.listdir('repos/'):
+                return send_from_directory(os.path.join('repos', user_hash), 'root.json')
+            else:
+                return abort(404)
+        except FileNotFoundError: 
+            return abort(400)
 
 
 
@@ -110,8 +111,9 @@ def get_posts(user_hash = None):
     location = requests.get('http://localhost:5001/api/get_peer?hash={}'.format(user_hash)).text
     ip = 'http://' + location.split('/')[0]
     payload = {'hash': user_hash}
-    posts = requests.get(ip + '/api/get_profile', params=payload).json()
-    return posts['posts']
+    posts = requests.get(ip + '/api/get_profile/{}'.format(user_hash)).json()
+    print(posts)
+    return "OK"
 
 
 @app.route('/login', methods=['POST'])
