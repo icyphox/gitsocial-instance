@@ -188,6 +188,8 @@ def gen_profile():
     list_of_posts = []
     list_of_followers = []
     user_name = request.args.get('username', session['user_hash'])
+    if user_name == session['user_hash'].replace('-', ''):
+        not_me = True
     with open('repos/{}/root.json'.format(user_name), 'r') as f:
         json_data = json.load(f)
         posts = get_posts(user_name)
@@ -199,7 +201,8 @@ def gen_profile():
                                 posts=list_of_posts, 
                                 username=user_name, 
                                 followers=json_data['followers'], 
-                                followings=json_data['following'])
+                                followings=json_data['following'],
+                                not_me=False)
         
 
 app.run(debug=True)

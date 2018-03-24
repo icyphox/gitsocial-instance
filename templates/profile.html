@@ -34,15 +34,21 @@
         <div class="container" style="padding-top: 100px">
             <div class="row">
         <div class="col-3">
-                <h2>@{{ username }}</h2>
-
+                <h2>@{{ username }}</h2> 
+                {% if not_me %}
+                <form action="http://localhost:5000/api/edit"> 
+                  <button class="btn btn-outline-success my-2 my-sm-0" name="following" value="{{ username }}">Follow</button>
+                </form> 
+                {% endif %}
                 <h3>Followers</h3>
+                <br>
                 <ul>
                   {% for follower in followers%}
                   <li>follower</li>
                   {% endfor %}
                 </ul>
                 <h3>Following</h3>
+                <br>
                 <ul>
                     {% for following in followings%}
                     <li>{{ following }}</li>
@@ -64,7 +70,7 @@
           </div>
         
           <div class="my-3 p-3 bg-white rounded box-shadow" id = "contentScroll">
-            <h6 class="border-bottom border-gray pb-2 mb-0 column">Your posts</h6>
+            <h6 class="border-bottom border-gray pb-2 mb-0 column">Posts</h6>
             {% for post in posts%}
             <div class="media text-muted pt-3">
               <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
