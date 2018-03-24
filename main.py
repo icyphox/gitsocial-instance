@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort, render_template
+from flask import Flask, request, jsonify, send_from_directory, abort, render_template, session, redirect
 from subprocess import run
 import json
 import arrow
@@ -118,12 +118,19 @@ def get_posts(user_hash = None):
 @app.route('/login', methods=['POST'])
 def login_user():
     redir_page = request.args.get('redir', '/')
-    user = request.form['user']
+    user_hash = request.form['hash']
     passw = request.form['pass']
-    if not os.path.isdir('repos/{}'.format(user)):
+    if not os.path.isdir('repos/{}'.format(user_hash)):
         abort(400)
     else:
-        return "ok auth"
+        prof = serve_profile(user_hash, local=True)
+        if prof["password"] == passw:
+            session["user_hash"] = user_hash
+            session["logged_in"] = True
+            return redirect(redir_page)
+        else:
+            return "invalid auth"
+
 
 
 @app.route('/')
