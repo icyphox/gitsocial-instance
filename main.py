@@ -38,7 +38,7 @@ def search_profiles():
         if j["nick"] == user_name:
             ret.append(j["hash"])
 
-    return str(ret)
+    return render_template('resuts.html', user_hashes = ret)
 
 
 @app.route('/api/create', methods=['POST'])
@@ -188,6 +188,8 @@ def gen_profile():
     list_of_posts = []
     list_of_followers = []
     user_name = request.args.get('username', session['user_hash'])
+    not_me = False
+    print("not_me", not_me)
     if user_name == session['user_hash'].replace('-', ''):
         not_me = True
     with open('repos/{}/root.json'.format(user_name), 'r') as f:
@@ -202,7 +204,7 @@ def gen_profile():
                                 username=user_name, 
                                 followers=json_data['followers'], 
                                 followings=json_data['following'],
-                                not_me=False)
+                                not_me=(not not_me))
         
 
 app.run(debug=True)

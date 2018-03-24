@@ -8,7 +8,7 @@
         <div class="container">
             {% for user_hash in user_hashes %}
             <div class="row">
-                <a href="http://localhost/api/profile?username={{ user_hash }}"<p>{{ user_hash }}</p>
+                <a href="http://localhost:5000/profile?username={{ user_hash }}">{{ user_hash }}</a>
             {% endfor %}
             </div>
         </div>
