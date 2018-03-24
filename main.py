@@ -151,6 +151,7 @@ def gen_timeline():
 @app.route('/profile')
 def gen_profile():
     list_of_posts = []
+    list_of_followers = []
     user_name = request.args.get('username')
     with open('repos/{}/root.json'.format(user_name), 'r') as f:
         json_data = json.load(f)
@@ -159,7 +160,11 @@ def gen_profile():
             list_of_posts.append({'timestamp': post['timestamp'],
                                   'content': post['content'],
                                   'username': user_name})
-        return render_template('profile.html', posts=list_of_posts, username=user_name)
+        return render_template('profile.html', 
+                                posts=list_of_posts, 
+                                username=user_name, 
+                                followers=json_data['followers'], 
+                                followings=json_data['following'])
         
 
 app.run(debug=True)

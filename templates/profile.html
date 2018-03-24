@@ -21,7 +21,7 @@
                 <a class="nav-link" href="./profile.html">Profile</a>
               </li>
               <li class="form-inline my-2 my-lg-0">
-                @{{username}}
+                @{{ username }}
               </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
@@ -33,7 +33,7 @@
         <div class="column">
         <div class="col-lg-4 ml-2">
                 <img class="rounded-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-                <h2>{{username}}</h2>
+                <h2>{{ username }}</h2>
                 <p>About the user</p>
                 <p><a class="btn btn-secondary" href="#" role="button">Their website link?</a></p>
 
@@ -44,13 +44,13 @@
           </div>
         </div>
 
-        <h3>Followers:</h3>
+        <h3>Followers</h3>
         <ul>
           {% for follower in followers%}
           <li>follower</li>
           {% endfor %}
         </ul>
-        <h3>Following:</h3>
+        <h3>Following</h3>
         <ul>
             {% for following in followings%}
             <li>following</li>
