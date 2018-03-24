@@ -202,7 +202,7 @@ def gen_profile():
                                 username=user_name, 
                                 followers=json_data['followers'], 
                                 followings=json_data['following'],
-                                not_me=False)
+                                not_me=not_me)
         
 
 app.run(debug=True)
