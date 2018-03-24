@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import Flask, request, jsonify, send_from_directory, abort, render_template
 from subprocess import run
 import json
 import arrow
@@ -15,7 +15,7 @@ IP_ADDR = ""
 @app.route("/api/get_profile/<user_hash>")
 def serve_profile(user_hash = None, local = False):
     if local:
-        return open(os.path.join('repos', user_hash, 'root.json')).read()
+        return json.loads(open(os.path.join('repos', user_hash, 'root.json')).read())
     else:
         try:
             if user_hash in os.listdir('repos/'):
@@ -45,7 +45,7 @@ def create_profile():
     user_hash = request.form['hash']
     password = request.form['password'].encode('utf-8')
     nick = request.form['nick']
-    print(type(password))
+ 
     if os.path.exists('repos/{}'.format(user_hash)):
         abort(400)
 
@@ -107,10 +107,12 @@ def get_posts(user_hash = None):
     list_of_posts = []
     location = requests.get('http://localhost:5001/api/get_peer?hash={}'.format(user_hash)).text
     ip = 'http://' + location.split('/')[0]
-    payload = {'hash': user_hash}
-    posts = requests.get(ip + '/api/get_profile/{}'.format(user_hash)).json()
-    print(posts)
-    return "OK"
+    if ip == 'http://localhost:5000':
+        return serve_profile(user_hash, local=True)["posts"]
+    else:
+        payload = {'hash': user_hash}
+        posts = requests.get(ip + '/api/get_profile/{}'.format(user_hash)).json()
+        return posts["posts"]
 
 
 @app.route('/login', methods=['POST'])
@@ -130,14 +132,19 @@ def gen_timeline():
     following = [{"nick": "user1"},{"nick": "user2"}]
     user_name = request.args.get("username")
     with open('repos/{}/root.json'.format(user_name),'r') as f:
-        json_data = json.loads(f)
+        json_data = json.load(f)
         following = json_data['following']
     for follow in following:
+
         posts = get_posts(follow)
+      
         for post in posts:
+           
             list_of_posts.append({"timestamp": post['timestamp'], 
                                 "content": post['content'], 
-                                "username": follow['nick']})
+                                "username": follow})
     
-    return list_of_posts
+ 
+    return render_template('index.html', posts=list_of_posts)
+
 app.run(debug=True)
