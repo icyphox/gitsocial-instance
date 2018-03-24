@@ -33,11 +33,7 @@
         <div class="column">
         <div class="col-lg-4 ml-2">
                 <img class="rounded-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-<<<<<<< HEAD
                 <h2>{{username}}</h2>
-=======
-                <h2>Username</h2>
->>>>>>> d97b6946af3b396220ad77bde3ce10b0f2349bb2
                 <p>About the user</p>
                 <p><a class="btn btn-secondary" href="#" role="button">Their website link?</a></p>
 
@@ -47,6 +43,19 @@
             <p><a class="btn btn-primary" href="#" role="button">Add post</a></p>
           </div>
         </div>
+
+        <h3>Followers:</h3>
+        <ul>
+          {% for follower in followers%}
+          <li>follower</li>
+          {% endfor %}
+        </ul>
+        <h3>Following:</h3>
+        <ul>
+            {% for following in followings%}
+            <li>following</li>
+            {% endfor %}
+        </ul>
         </div>
         <main role="main" class="container">
           <div class="my-3 p-3 bg-white rounded box-shadow" id = "contentScroll">

@@ -151,23 +151,31 @@ def gen_timeline():
     if 'logged_in' not in session:
         return redirect(url_for('login_user'))
     list_of_posts = []
-    following = [{"nick": "user1"},{"nick": "user2"}]
     user_name = request.args.get("username")
     with open('repos/{}/root.json'.format(user_name),'r') as f:
         json_data = json.load(f)
         following = json_data['following']
     for follow in following:
-
         posts = get_posts(follow)
-      
         for post in posts:
-           
             list_of_posts.append({"timestamp": post['timestamp'], 
                                 "content": post['content'], 
                                 "username": follow})
-    
- 
     return render_template('index.html', posts=list_of_posts)
 
 app.secret_key = "very secret key here"
+@app.route('/profile')
+def gen_profile():
+    list_of_posts = []
+    user_name = request.args.get('username')
+    with open('repos/{}/root.json'.format(user_name), 'r') as f:
+        json_data = json.load(f)
+        posts = get_posts(user_name)
+        for post in posts:
+            list_of_posts.append({'timestamp': post['timestamp'],
+                                  'content': post['content'],
+                                  'username': user_name})
+        return render_template('profile.html', posts=list_of_posts, username=user_name)
+        
+
 app.run(debug=True)
