@@ -75,32 +75,37 @@ def logout_user():
     session.pop('user_hash', None)
     return redirect('/')
 
-@app.route('/api/edit')
+@app.route('/api/edit', methods=['POST'])
 def edit_json():
     if 'logged_in' not in session:
         return redirect('/login')
-    key = request.args.get('key')
-    user_hash = request.args.get('hash')
+    key = request.form['key']
+    user_hash = session["user_hash"]
     if not all([x in (string.ascii_lowercase + string.digits) for x in user_hash]):
         return abort(400)
     try:
         with open('repos/{}/root.json'.format(user_hash), 'r') as f:
             json_data = json.load(f)
+            val = request.form["value"]
             if key == 'nick':
-                json_data['nick'] = request.args.get('val')
+                json_data['nick'] = val
             elif key == 'website':
-                json_data['website'] = request.args.get('val')
+                json_data['website'] = val
             elif key == 'posts':
                 message_dict = {
-                    'content': request.args.get('val'),
+                    'content': val,
                     'timestamp': arrow.utcnow().timestamp
                         }
                 json_data['posts'].append(message_dict)
             elif key == 'following':
-                json_data['following'].append(request.args.get('val'))
+                json_data['following'].append(val)
             else:
                 return abort(400)
+            with open('repos/{}/root.json'.format(user_hash), 'w') as f:
+                json.dump(json_data, f)
+            return redirect('/profile')
     except FileNotFoundError:
+        print("ok then?")
         return abort(400)
 
     with open('repos/{}/root.json'.format(user_hash), 'w') as f:
@@ -124,6 +129,12 @@ def get_posts(user_hash = None):
         return posts["posts"]
 
 
+def thats_some_good_hash(stuff):
+    import hashlib
+    m = hashlib.sha256()
+    m.update(stuff.encode('utf-8'))
+    return m.hexdigest()
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
@@ -137,7 +148,8 @@ def login_user():
             abort(400)
         else:
             prof = serve_profile(user_hash, local=True)
-            if prof["password"] == passw:
+
+            if prof["password"] == thats_some_good_hash(passw):
                 session["user_hash"] = user_hash
                 session["logged_in"] = True
                 return redirect(redir_page)
@@ -151,7 +163,7 @@ def gen_timeline():
     if 'logged_in' not in session:
         return redirect(url_for('login_user'))
     list_of_posts = []
-    user_name = request.args.get("username")
+    user_name = session["user_hash"]
     with open('repos/{}/root.json'.format(user_name),'r') as f:
         json_data = json.load(f)
         following = json_data['following']
@@ -168,7 +180,7 @@ app.secret_key = "very secret key here"
 def gen_profile():
     list_of_posts = []
     list_of_followers = []
-    user_name = request.args.get('username')
+    user_name = request.args.get('username', session['user_hash'])
     with open('repos/{}/root.json'.format(user_name), 'r') as f:
         json_data = json.load(f)
         posts = get_posts(user_name)

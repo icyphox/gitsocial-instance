@@ -2,7 +2,7 @@
 <head>
     <title>GitSocial</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="./gitsocial-looks.css">
+    <link rel="stylesheet" href="/static/gitsocial-looks.css">
 </head>
 <body class="bg-light">
 
@@ -15,10 +15,10 @@
           <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link" href="./index.html">Dashboard <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Dashboard <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item active">
-                <a class="nav-link" href="./profile.html">Profile</a>
+                <a class="nav-link" href="/profile">Profile</a>
               </li>
               <li class="form-inline my-2 my-lg-0">
                 @{{ username }}
@@ -38,9 +38,13 @@
                 <p><a class="btn btn-secondary" href="#" role="button">Their website link?</a></p>
 
         <div class="form-group">
+            <form action="/api/edit" method="POST">
             <label for="exampleFormControlTextarea1">Example textarea</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            <p><a class="btn btn-primary" href="#" role="button">Add post</a></p>
+            <input type="hidden" name="key" value="posts">
+            <textarea name="value" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <button type="submit"> Submit <button></button>
+          </form>
+            
           </div>
         </div>
 
@@ -53,7 +57,7 @@
         <h3>Following</h3>
         <ul>
             {% for following in followings%}
-            <li>following</li>
+            <li>{{ following }}</li>
             {% endfor %}
         </ul>
         </div>
@@ -74,6 +78,6 @@
           
         </main>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="./holder.js"></script>
+        <script src="/static/holder.js"></script>
       </body>
 </html>
