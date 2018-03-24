@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 IP_ADDR = ""
 
-@app.route("/api/get_instance")
+@app.route("/api/get_profile")
 def serve_profile():
     user_hash = request.args.get('hash')
     try:
@@ -88,6 +88,7 @@ def edit_json():
                     'content': request.args.get('val'),
                     'timestamp': arrow.utcnow().timestamp
                         }
+                json_data['posts'].append(message_dict)
             elif key == 'following':
                 json_data['following'].append(request.args.get('val'))
             else:
@@ -106,9 +107,12 @@ def edit_json():
 @app.route('/api/get_posts/<user_hash>')
 def get_posts(user_hash = None):
     list_of_posts = []
-    location = requests.get('localhost:5001/api/get_peer?hash={}'.format(user_hash))
-    print(location)
-    return "ok"
+    location = requests.get('http://localhost:5001/api/get_peer?hash={}'.format(user_hash)).text
+    ip = 'http://' + location.split('/')[0]
+    payload = {'hash': user_hash}
+    posts = requests.get(ip + '/api/get_profile', params=payload).json()
+    return posts['posts']
+
 
 @app.route('/login', methods=['POST'])
 def login_user():
