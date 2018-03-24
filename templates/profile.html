@@ -36,10 +36,10 @@
         <div class="col-3">
                 <h2>@{{ username }}</h2> 
                 {% if not_me %}
-                <form action="http://localhost:5000/api/edit" method="POST">
+                <form action="http://localhost:5000/api/edit" method="POST"> 
                   <input type="hidden" name="key" value="following">
                   <input type="hidden" name="value" value="{{ username }}">
-                  <button class="btn btn-outline-success my-2 my-sm-0">Follow</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Follow</button>
                 </form> 
                 {% endif %}
                 <h3>Followers</h3>
@@ -62,12 +62,15 @@
     <div class="container">
         <div class="col-9">
         <div class="form-group">
+
+          {% if not_me %}
             <form action="/api/edit" method="POST">
   
             <input type="hidden" name="key" value="posts">
             <textarea placeholder="Enter new post..." name="value" class="form-control" id="exampleFormControlTextarea1" rows="3" style="margin-bottom: 10px"></textarea>
             <button type="submit" class="btn btn-primary"> Submit</button>
           </form>
+          {% endif %}
             
           </div>
         
