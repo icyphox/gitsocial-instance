@@ -43,6 +43,19 @@
             <p><a class="btn btn-primary" href="#" role="button">Add post</a></p>
           </div>
         </div>
+
+        <h3>Followers:</h3>
+        <ul>
+          {% for follower in followers%}
+          <li>follower</li>
+          {% endfor %}
+        </ul>
+        <h3>Following:</h3>
+        <ul>
+            {% for following in followings%}
+            <li>following</li>
+            {% endfor %}
+        </ul>
         </div>
         <main role="main" class="container">
           <div class="my-3 p-3 bg-white rounded box-shadow" id = "contentScroll">
