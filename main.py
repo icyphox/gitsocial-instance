@@ -29,17 +29,14 @@ def serve_profile(user_hash = None, local = False):
 
 @app.route("/api/search")
 def search_profiles():
-    user_name = request.args.get("username")
+    user_name = request.args.get("nick")
     ret = []
     for dir_name in os.listdir("repos/"):
-        try:
-            j = json.loads("repos/{}/root.json".format(dir_name))
-            if j["user_name"] == user_name:
-                ret.append(dir_name)
-        except:
-            return abort(500)
-    return jsonify(ret)
+        j = json.load(open("repos/{}/root.json".format(dir_name)))
+        if j["nick"] == user_name:
+            ret.append(j["hash"])
 
+    return str(ret)
 
 
 @app.route('/api/create', methods=['POST'])
