@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, send_from_directory, abort, render_template, session, redirect
+from flask import Flask, request, jsonify, send_from_directory, abort, render_template,\
+                  session, redirect, url_for
 from subprocess import run
 import json
 import arrow
@@ -68,8 +69,16 @@ def create_profile():
     return "OK"
 
 
+@app.route('/logout')
+def logout_user():
+    session.pop('logged_in', None)
+    session.pop('user_hash', None)
+    return redirect('/')
+
 @app.route('/api/edit')
 def edit_json():
+    if 'logged_in' not in session:
+        return redirect('/login')
     key = request.args.get('key')
     user_hash = request.args.get('hash')
     if not all([x in (string.ascii_lowercase + string.digits) for x in user_hash]):
@@ -115,26 +124,32 @@ def get_posts(user_hash = None):
         return posts["posts"]
 
 
-@app.route('/login', methods=['POST'])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login_user():
-    redir_page = request.args.get('redir', '/')
-    user_hash = request.form['hash']
-    passw = request.form['pass']
-    if not os.path.isdir('repos/{}'.format(user_hash)):
-        abort(400)
-    else:
-        prof = serve_profile(user_hash, local=True)
-        if prof["password"] == passw:
-            session["user_hash"] = user_hash
-            session["logged_in"] = True
-            return redirect(redir_page)
+    if request.method == 'GET':
+        return render_template('login.html',)
+    elif request.method == 'POST':
+        redir_page = request.args.get('redir', '/')
+        user_hash = request.form['hash']
+        passw = request.form['pass']
+        if not os.path.isdir('repos/{}'.format(user_hash)):
+            abort(400)
         else:
-            return "invalid auth"
+            prof = serve_profile(user_hash, local=True)
+            if prof["password"] == passw:
+                session["user_hash"] = user_hash
+                session["logged_in"] = True
+                return redirect(redir_page)
+            else:
+                return "invalid auth"
 
 
 
 @app.route('/')
 def gen_timeline():
+    if 'logged_in' not in session:
+        return redirect(url_for('login_user'))
     list_of_posts = []
     user_name = request.args.get("username")
     with open('repos/{}/root.json'.format(user_name),'r') as f:
@@ -148,6 +163,7 @@ def gen_timeline():
                                 "username": follow})
     return render_template('index.html', posts=list_of_posts)
 
+app.secret_key = "very secret key here"
 @app.route('/profile')
 def gen_profile():
     list_of_posts = []
