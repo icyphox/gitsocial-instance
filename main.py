@@ -8,6 +8,7 @@ import shutil
 import os
 import hashlib
 import requests
+import random
 
 app = Flask(__name__)
 
@@ -43,7 +44,10 @@ def search_profiles():
 @app.route('/api/create', methods=['POST'])
 def create_profile():
     from git import Repo
-    user_hash = request.form['hash']
+    with open('dict.txt') as f:
+        line = f.readlines()
+        user_hash_rep = '-'.join([random.choice(line).strip('\n') for _ in range(4)])
+        user_hash = user_hash_rep.replace('-', '')
     password = request.form['password'].encode('utf-8')
     nick = request.form['nick']
  
@@ -66,7 +70,11 @@ def create_profile():
     Repo.init(os.path.join('repos', user_hash))
     payload = {'hash': user_hash, 'ip': 'localhost:5000'}
     requests.get('http://localhost:5001/api/set_peer', params=payload)
-    return "OK"
+    return render_template('login.html', new_reg_hash = user_hash_rep)
+
+@app.route('/register')
+def gen_register():
+    return render_template('register.html')
 
 
 @app.route('/logout')
@@ -81,8 +89,6 @@ def edit_json():
         return redirect('/login')
     key = request.form['key']
     user_hash = session["user_hash"]
-    if not all([x in (string.ascii_lowercase + string.digits) for x in user_hash]):
-        return abort(400)
     try:
         with open('repos/{}/root.json'.format(user_hash), 'r') as f:
             json_data = json.load(f)
@@ -105,7 +111,6 @@ def edit_json():
                 json.dump(json_data, f)
             return redirect('/profile')
     except FileNotFoundError:
-        print("ok then?")
         return abort(400)
 
     with open('repos/{}/root.json'.format(user_hash), 'w') as f:
@@ -137,12 +142,14 @@ def thats_some_good_hash(stuff):
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login_user():
+def login_user(new_reg = None):
     if request.method == 'GET':
-        return render_template('login.html',)
+        if new_reg:
+            return render_template('login.html', new_reg_hash = new_reg)
+        return render_template('login.html')
     elif request.method == 'POST':
         redir_page = request.args.get('redir', '/')
-        user_hash = request.form['hash']
+        user_hash = request.form['hash'].replace('-', '')
         passw = request.form['pass']
         if not os.path.isdir('repos/{}'.format(user_hash)):
             abort(400)

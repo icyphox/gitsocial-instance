@@ -5,6 +5,14 @@
     <link rel="stylesheet" href="/static/login.css">
 </head>
 <body class="bg-light">
+  <div class="container">
+         {% if new_reg_hash %} 
+    <div class="row">
+         <div class="col" align="center"> <p> Your hash is <code>{{ new_reg_hash }}</code>. Use this to login to your account.</p> </div>
+    </div>
+         {% endif %} 
+  <div class="row">
+    <div class="col">
         <form class="form-signin" action="/login" method="POST">
                 <h1 class="h3 mb-3 font-weight-normal">Sign In</h1>
                 <label for="inputEmail" class="sr-only">Hash</label>
@@ -15,5 +23,8 @@
               </form>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="/static/holder.js"></script>
+  </div>
+  </div>
+  </div>
       </body>
 </html>
