@@ -180,7 +180,7 @@ def gen_timeline():
             list_of_posts.append({"timestamp": post['timestamp'], 
                                 "content": post['content'], 
                                 "username": follow})
-    return render_template('index.html', posts=list_of_posts)
+    return render_template('index.html', posts=list_of_posts, username=user_name)
 
 app.secret_key = "very secret key here"
 @app.route('/profile')

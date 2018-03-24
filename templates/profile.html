@@ -20,7 +20,7 @@
               <li class="nav-item active">
                 <a class="nav-link" href="/profile">Profile</a>
               </li>
-              <li class="form-inline my-2 my-lg-0">
+              <li class="form-inline my-2 my-lg-0 text-light">
                 @{{ username }}
               </li>
             </ul>
@@ -34,11 +34,7 @@
         <div class="container" style="padding-top: 100px">
             <div class="row">
         <div class="col-3">
-  
-                <img class="rounded-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-                <h2>{{ username }}</h2>
-                <p>About the user</p>
-                <p><a class="btn btn-secondary" href="#" role="button">Their website link?</a></p>
+                <h2>@{{ username }}</h2>
 
                 <h3>Followers</h3>
                 <ul>
@@ -54,7 +50,8 @@
                 </ul>
         </div>
 
-        
+
+    <div class="container">
         <div class="col-9">
         <div class="form-group">
             <form action="/api/edit" method="POST">
@@ -78,6 +75,7 @@
             </div>
             {% endfor %}
           </div>
+      </div>
     
           
         </div>
